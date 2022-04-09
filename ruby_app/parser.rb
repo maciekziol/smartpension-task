@@ -1,9 +1,16 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'pry'
+require 'bundler/setup'
+Bundler.require
 
-raise ArgumentError, 'wrong number of arguments (given 0, expected 1) (ArgumentError)' if ARGV.empty?
+IncorrectFilenameArgumentError = Class.new(ArgumentError)
 
-binding.pry
-puts 'elo'
+def process(args)
+  raise ArgumentError.new, "wrong number of arguments (given #{args.size}, expected 1)" if args.size != 1
+  unless args[0].end_with?('.log')
+    raise IncorrectFilenameArgumentError.new, "wrong filename provided (given '#{args[0]}', expected '*.log')"
+  end
+end
+
+process(ARGV) if $PROGRAM_NAME == __FILE__
